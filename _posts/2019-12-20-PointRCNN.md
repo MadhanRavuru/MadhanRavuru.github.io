@@ -1,4 +1,5 @@
 ---
+layout: post
 title: PointRCNN: 3D Object Proposal generation and detection from Point cloud 
 ---
 
