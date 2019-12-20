@@ -3,6 +3,7 @@ layout: post
 title: PointRCNN: 3D Object Proposal generation and detection from Point cloud 
 ---
 
+Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).
 # 3D Object detection
 **3D Object Detection** is indespensable for real-world applications.
 dmaslmlca ,c
