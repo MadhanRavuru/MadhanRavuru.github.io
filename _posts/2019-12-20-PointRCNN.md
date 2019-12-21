@@ -24,6 +24,7 @@ state-of-the-art methods with remarkable margins by using only point cloud as in
 ## Related Work
 Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or regular 3D voxels for feature learning.
 ### Aggregate View Object Detection (AVOD)
+
 | ![avod]({{ site.baseurl }}/images/avod.png) |
 |:--:| 
 | *Jason Ku, Melissa Mozifian, Jungwook Lee, Ali Harakeh and Steven Lake Waslander. Joint 3d proposal generation and object detection from view aggregation. CoRR, 2017.* |
