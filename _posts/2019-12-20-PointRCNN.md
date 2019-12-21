@@ -1,6 +1,7 @@
 ---
 layout: post
 title: PointRCNN: 3D Object Proposal generation and detection from Point cloud 
+mathjax: true
 ---
 
 # PointRCNN: 3D Object Proposal generation and detection from Point cloud
@@ -68,7 +69,7 @@ In contrast to the mentioned related work, our bottom-to-up 3D proposal generati
 We utilize the [PointNet++](https://arxiv.org/abs/1706.02413) with multi-scale grouping as our backbone network to learn discriminative point-wise features for describing the raw point clouds. An alternative point-cloud network structures, such as VoxelNet with [sparse convolutions](https://arxiv.org/abs/1711.10275), could also be adopted as our backbone network.
 We learn point-wise features for the segmentation of the raw point cloud of the whole scene into foreground and background points. Also, simultaneously we generate 3D proposals from the segmented foreground points. Thus, our method avoids using a large set of predefined 3D boxes in the 3D space and limits the search space for 3D object proposal generation. Such a strategy helps in avoiding large number of 3D anchor boxes in the whole 3D space and saves computation.
 
-#### Foreground point segmentation
+#### **Foreground point segmentation**
 
 As objects in 3D scenes are naturally well-separated without overlapping each other, 3D points inside 3D boxes are considered as foreground points. Thus, the training data for 3D object detection directly provides the ground-truth segmentation mask for 3D object segmentation. From the point-wise features encoded by the PointNet++, one segmentation head is appended for the estimation of the foreground mask and one box regression head for the generation of 3D proposals. The foreground segmentation and 3D box proposal generation are done simultaneously. As the number of foreground
 points is usually much smaller than background points for a general large-scale outdoor scene, we use focal loss to handle the class imbalance problem.
