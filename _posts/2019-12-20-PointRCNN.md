@@ -14,9 +14,9 @@ generate 3D point clouds. The detection of 3D objects with point clouds still fa
 irregular data format and sparse representation of point cloud with large search space. In the below figure, we can see the
 7 DoF of 3D object detection (position and dimensions of the box along with box orientation).
 
-<div class="large" markdown="1">
-![bounding box]({{ site.baseurl }}/images/boundbox.png =250x "2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)")
-</div>
+
+![bounding box]({{ site.baseurl }}/images/boundbox.png =250x)
+*2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017*
 
 The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors. The proposed PointRCNN outperforms
 state-of-the-art methods with remarkable margins by using only point cloud as input.
