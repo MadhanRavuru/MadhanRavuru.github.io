@@ -69,13 +69,14 @@ In contrast to the mentioned related work, our bottom-to-up 3D proposal generati
 We utilize the [PointNet++](https://arxiv.org/abs/1706.02413) with multi-scale grouping as our backbone network to learn discriminative point-wise features for describing the raw point clouds. An alternative point-cloud network structures, such as VoxelNet with [sparse convolutions](https://arxiv.org/abs/1711.10275), could also be adopted as our backbone network.
 We learn point-wise features for the segmentation of the raw point cloud of the whole scene into foreground and background points. Also, simultaneously we generate 3D proposals from the segmented foreground points. Thus, our method avoids using a large set of predefined 3D boxes in the 3D space and limits the search space for 3D object proposal generation. Such a strategy helps in avoiding large number of 3D anchor boxes in the whole 3D space and saves computation.
 
-#### **Foreground point segmentation**
+#### Foreground point segmentation
 
 As objects in 3D scenes are naturally well-separated without overlapping each other, 3D points inside 3D boxes are considered as foreground points. Thus, the training data for 3D object detection directly provides the ground-truth segmentation mask for 3D object segmentation. From the point-wise features encoded by the PointNet++, one segmentation head is appended for the estimation of the foreground mask and one box regression head for the generation of 3D proposals. The foreground segmentation and 3D box proposal generation are done simultaneously. As the number of foreground
 points is usually much smaller than background points for a general large-scale outdoor scene, we use focal loss to handle the class imbalance problem.
 
-$$ L_{\mathrm{focal}}(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma} \mathrm{log}(p_{t}), $$
+The formula for focal loss is given by,
 
+$$ L_{\mathrm{focal}}(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma} \mathrm{log}(p_{t}), $$
 
 $$\\ \\ \text{where} \  p_{t}= 
     \begin{cases}
@@ -83,6 +84,19 @@ $$\\ \\ \text{where} \  p_{t}=
       1-p & \text{otherwise}
     \end{cases} $$
     
+While training point cloud segmentation, the parameters $$\alpha_{t} \text{and} \gamma $$ are chosen as 0.25 and 2 respectively.
+
+| ![FocalLossgraph]({{ site.baseurl }}/images/FocalLossgraph.png) |
+|:--:| 
+| *Tsung-Yi Lin Priya Goyal Ross Girshick Kaiming He Piotr Dollar. Focal Loss for Dense Object Detection. Facebook AI Research (FAIR), 2018* |
+
+Focal Loss adds a factor $$(1-p_{t})^{\gamma}$$ to standard cross entropy loss. By setting $$\gamma > 0$$, we put more focus on hard, misclassified examples and reduce the relative loss for well-classified examples $$(p_{t} > 0.5).$$
+
+
+#### Bin based 3D bounding box proposal generation
+
+Direct regression is presumably harder task with the potential to introduce instability during training. Bin-based classification instead of direct regression with smooth L1 loss results in more accurate and robust center localization.
+
 An h1 header
 ============
 
