@@ -5,11 +5,12 @@ title: PointRCNN: 3D Object Proposal generation and detection from Point cloud
 
 # PointRCNN: 3D Object Proposal generation and detection from Point cloud
 
-3D object detection is a key challenge for real-world applications, such as autonomous driving and domestic robots. The 2D object detection has 4 Degrees-of-Freedom (DoF) and the algorithms involved are capable of handling large variations of viewpoints and background clutters in images. While the detection of 3D objects with point clouds still faces great challenges from the irregular data format and large search space of  7 DoF of 3D object.
-![an image alt text]({{ site.baseurl }}/images/boundbox.png "2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)")
-In autonomous driving, the most commonly used 3D sensors are the LiDAR sensors, which generate 3D point
-clouds to capture the 3D structures of the scenes. The difficulty of point cloud-based 3D object detection mainly lies
-in irregularity of the point clouds. The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors.
+## Introduction
+3D object detection is a key challenge for real-world applications, such as autonomous driving and domestic robots. The 2D object detection has 4 Degrees-of-Freedom (DoF) and the algorithms involved are capable of handling large variations of viewpoints and background clutters in images. In autonomous driving, the most commonly used 3D sensors are the LiDAR sensors, which generate 3D point clouds to capture the 3D structures of the scenes. The detection of 3D objects with point clouds still faces great challenges from the irregular data format and large search space of 7 DoF of 3D object.
+
+![bounding box]({{ site.baseurl }}/images/boundbox.png "2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)")
+
+The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors.
 
 
 An h1 header
