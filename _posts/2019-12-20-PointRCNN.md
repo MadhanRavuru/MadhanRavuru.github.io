@@ -52,15 +52,36 @@ VoxelNet is comprised of feature learning network, convolutional middle layers a
 
 In contrast to the mentioned related work, our bottom-to-up 3D proposal generation method directly generates robust 3D proposals from raw point clouds, which is optimal, efficient and free from quantization. The proposed method comprises of 2 stages.
 
-1. Bottom-up 3D box proposal generation
+**1. Bottom-up 3D box proposal generation**
 * PointNet++ with multi-scale grouping as our backbone network
 * Segmenting the point cloud of the whole scene into foreground and background points 
 * Generates high quality 3D box proposals in bottom-up manner 
 
-2.	Refining the proposals in the canonical coordinates
+**2.	Refining the proposals in the canonical coordinates**
 * Point cloud region pooling (proposed by authors)
 * Transforming the pooled points of each proposal to canonical coordinates (helps to learn better local spatial features) 
 
+| ![overview]({{ site.baseurl }}/images/overview.png) |
+
+### Bottom-up 3D proposal generation via point cloud segmentation (Stage 1)
+
+We utilize the [PointNet++](https://arxiv.org/abs/1706.02413) with multi-scale grouping as our backbone network to learn discriminative point-wise features for describing the raw point clouds. An alternative point-cloud network structures, such as VoxelNet with [sparse convolutions](https://arxiv.org/abs/1711.10275), could also be adopted as our backbone network.
+We learn point-wise features for the segmentation of the raw point cloud of the whole scene into foreground and background points. Also, simultaneously we generate 3D proposals from the segmented foreground points. Thus, our method avoids using a large set of predefined 3D boxes in the 3D space and limits the search space for 3D object proposal generation. Such a strategy helps in avoiding large number of 3D anchor boxes in the whole 3D space and saves computation.
+
+#### Foreground point segmentation
+
+As objects in 3D scenes are naturally well-separated without overlapping each other, 3D points inside 3D boxes are considered as foreground points. Thus, the training data for 3D object detection directly provides the ground-truth segmentation mask for 3D object segmentation. From the point-wise features encoded by the PointNet++, one segmentation head is appended for the estimation of the foreground mask and one box regression head for the generation of 3D proposals. The foreground segmentation and 3D box proposal generation are done simultaneously. As the number of foreground
+points is usually much smaller than background points for a general large-scale outdoor scene, we use focal loss to handle the class imbalance problem.
+
+$$ L_{\mathrm{focal}}(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma} \mathrm{log}(p_{t}), $$
+
+
+$$\\ \\ \text{where} \  p_{t}= 
+    \begin{cases}
+      p & \text{for foreground point} \\
+      1-p & \text{otherwise}
+    \end{cases} $$
+    
 An h1 header
 ============
 
