@@ -19,14 +19,14 @@ irregular data format and sparse representation of point cloud with large search
 |:--:| 
 | *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)* |
 
-A novel two-stage 3D object detection framework ([PointRCNN](https://arxiv.org/abs/1812.04244), which directly uses 3D point clouds and achieves accurate and robust 3D detection performance is introduced. The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors. The proposed method outperforms state-of-the-art methods with remarkable margins by using only point cloud as input on KITTI dataset.
+A novel two-stage 3D object detection framework ([PointRCNN](https://arxiv.org/abs/1812.04244)), which directly uses 3D point clouds and achieves accurate and robust 3D detection performance is introduced. The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors. The proposed method outperforms state-of-the-art methods with remarkable margins by using only point cloud as input on KITTI dataset.
 
 ## Related Work
 
 Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or regular 3D voxels for feature learning.
 
 ### Aggregate View Object Detection (AVOD)
-[AVOD](https://arxiv.org/abs/1712.02294) uses LIDAR point clouds and RGB images to generate features that are shared by two subnetworks: a region proposal network (RPN) and a second stage detector network. The RPN places 80-100k anchor boxes in the 3D space and for each anchor box, features are pooled in multiple views for generating proposals. The second stage detection network uses the generated proposals to predict the accurate extents, orientation and classification of objects in 3D space. However, transforming point cloud to BEV loses geometric information and is not optimal.
+[AVOD](https://arxiv.org/abs/1712.02294) uses LIDAR point clouds and RGB images to generate features that are shared by two subnetworks: a region proposal network (RPN) and a second stage detector network. The RPN places 80-100k anchor boxes in the 3D space and for each anchor box, features are pooled in multiple views for generating proposals. The second stage detection network uses the generated proposals to predict the accurate extents, orientation and classification of objects in 3D space. However, transforming point cloud to BEV loses geometric information. Also, this method uses large number of anchor boxes for proposal generation, which is not optimal.
 
 | ![avod]({{ site.baseurl }}/images/avod.png) |
 |:--:| 
@@ -96,7 +96,7 @@ Focal Loss adds a factor $$(1-p_{t})^{\gamma}$$ to standard cross entropy loss. 
 
 As mentioned above, we also append a box regression head for simultaneously generating 3D proposals with the foreground point segmentation. During training, for each foreground point, we regress 3D bounding box location from the box regression head. Although, the background points are not used for regressing the boxes, these points provide supporting information for the box proposal generation because of the receptive field of the point-cloud network.
 
-A 3D bounding box is represented as (x, y, z, h, w, l, θ) in the LiDAR coordinate system, where (x, y, z) is the object center location, (h, w, l) is the object size, and θ is the object orientation from the bird’s view.
+A 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$ in the LiDAR coordinate system, where $$(x, y, z)$$ is the object center location, $$(h, w, l)$$ is the object size, and $$ θ $$ is the object orientation from the bird’s view.
 [Direct regression is presumably harder task with the potential to introduce instability](https://arxiv.org/abs/1901.02970) during training. Bin-based classification instead of direct regression with smooth L1 loss results in more accurate and robust center localization.
 
 An h1 header
