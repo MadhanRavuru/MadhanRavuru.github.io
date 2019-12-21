@@ -101,6 +101,13 @@ In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, 
 
 | ![equation1]({{ site.baseurl }}/images/eq1.png) |
 
+$$\begin{align*}
+\text{bin}_{u}^{(p)} &=\left\lfloor\frac{u^{p}-u^{(p)}+\mathcal{S}}{\delta}\right\rfloor \ \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
+\text{res}_{u}^{(p)} &= \dfrac{1}{C}\left ( u^{p}-u^{(p)}+\mathcal{S}- \left ( \text{bin}_{u}^{(p)}\cdot \delta + \dfrac{\delta}{2} \right )\right )\  \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
+ 
+\text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w.l\}}\
+\end{align*}$$
+
 An h1 header
 ============
 
