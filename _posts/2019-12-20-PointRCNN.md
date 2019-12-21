@@ -12,16 +12,21 @@ driving and domestic robots. The CNN machinery for 2D object detection with 4 De
 large variations of viewpoints and background clutters in images. In autonomous driving, LiDAR sensors are mostly used to 
 generate 3D point clouds. The detection of 3D objects with point clouds still faces great challenges because of the
 irregular data format and sparse representation of point cloud with large search space. In the below figure, we can see the
-7 DoF of 3D object detection (position and dimensions of the box along with box orientation).
-
+7 DoF of 3D object detection (position and dimensions of the bounding box along with box orientation).
 
 | ![boundingbox]({{ site.baseurl }}/images/boundbox.png) |
 |:--:| 
-| *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017* |
+| *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)* |
 
 The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors. The proposed PointRCNN outperforms
-state-of-the-art methods with remarkable margins by using only point cloud as input.
+state-of-the-art methods with remarkable margins by using only point cloud as input on KITTI dataset.
 
+## Related Work
+Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or regular 3D voxels for feature learning.
+### Aggregate View Object Detection (AVOD)
+| ![avod]({{ site.baseurl }}/images/avod.png) |
+|:--:| 
+| *Jason Ku, Melissa Mozifian, Jungwook Lee, Ali Harakeh and Steven Lake Waslander. Joint 3d proposal generation and object detection from view aggregation. CoRR, 2017.* |
 
 An h1 header
 ============
