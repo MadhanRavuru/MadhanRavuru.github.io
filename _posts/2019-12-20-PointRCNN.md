@@ -115,6 +115,7 @@ $$\begin{aligned}
 \mathcal{L}_{\mathrm{reg}} &=\frac{1}{N_{\mathrm{pos}}} \sum_{p \in \mathrm{pos}}\left(\mathcal{L}_{\mathrm{bin}}^{(p)}+\mathcal{L}_{\mathrm{res}}^{(p)}\right)
 \end{aligned}$$
 
+| ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
 
 An h1 header
 ============
