@@ -22,12 +22,44 @@ The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a s
 state-of-the-art methods with remarkable margins by using only point cloud as input on KITTI dataset.
 
 ## Related Work
+
 Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or regular 3D voxels for feature learning.
+
 ### Aggregate View Object Detection (AVOD)
+AVOD uses LIDAR point clouds and RGB images to generate features that are shared by two subnetworks: a region proposal network (RPN) and a second stage detector network. The RPN places 80-100k anchor boxes in the 3D space and for each anchor box, features are pooled in multiple views for generating proposals. The second stage detection network uses the generated proposals to predict the accurate extents, orientation and classification of objects in 3D space. However, transforming point cloud to BEV loses geometric information and is not optimal.
 
 | ![avod]({{ site.baseurl }}/images/avod.png) |
 |:--:| 
 | *Jason Ku, Melissa Mozifian, Jungwook Lee, Ali Harakeh and Steven Lake Waslander. Joint 3d proposal generation and object detection from view aggregation. CoRR, 2017.* |
+
+### Frustum-Pointnet
+This method estimates 3D bounding boxes based on 3D points cropped from 2D regions. Given RGB-D data, 2D object region proposals in the RGB image are generated using a CNN. Then from the depth data, each 2D region is extruded to a 3D viewing frustum to get a point cloud. Finally, our frustum PointNet predicts a 3D bounding box for the object from the points in frustum. But, perfomance of this method heavily relies on 2D detection without taking the advantages of 3D information.
+
+| ![frustum]({{ site.baseurl }}/images/frustum.png) |
+|:--:| 
+| *Charles Ruizhongtai Qi, Wei Liu, Chenxia Wu, Hao Su, and Leonidas J. Guibas. Frustum pointnets for 3d object detection from RGB-D data. CoRR, 2017* |
+
+### VoxelNet
+VoxelNet is comprised of feature learning network, convolutional middle layers and RPN. The feature learning network divides raw point cloud into equally spaced 3D voxels. The points within each voxel are transformed into a unified feature representation through the voxel feature encoding (VFE) layer. Then, 3D convolution is applied to get aggregate spatial context. Finally, a RPN generates the 3D detection. However, information loss occurs during quantization. Also, 3D convolution suffers from greater computational cost and thus higher latency in comparison to 2D convolution.
+
+
+| ![voxel]({{ site.baseurl }}/images/voxel.png) |
+|:--:| 
+| *Yin Zhou and Oncel Tuzel. Voxelnet: End-to-end learning for point cloud based 3d object detection. CoRR, 2017.* |
+
+
+## Our Method
+
+In contrast to the mentioned related work, our bottom-to-up 3D proposal generation method directly generates robust 3D proposals from raw point clouds, which is optimal, efficient and free from quantization. The proposed method comprises of 2 stages.
+
+1. Bottom-up 3D box proposal generation
+* PointNet++ with multi-scale grouping as our backbone network
+* Segmenting the point cloud of the whole scene into foreground and background points 
+* Generates high quality 3D box proposals in bottom-up manner 
+
+2.	Refining the proposals in the canonical coordinates
+* Point cloud region pooling (proposed by authors)
+* Transforming the pooled points of each proposal to canonical coordinates (helps to learn better local spatial features) 
 
 An h1 header
 ============
