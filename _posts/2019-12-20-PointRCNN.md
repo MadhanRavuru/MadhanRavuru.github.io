@@ -99,7 +99,6 @@ As mentioned above, we also append a box regression head for simultaneously gene
 In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$ , where $$(x, y, z)$$ is the center location of object, $$(h, w, l)$$ is the size of object, and $$ θ $$ is the orientation of object from the BEV.
 [Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length δ $$/delta$$ for representing different centers of object $$(x, z)$$ on the $$X-Z$$ plane. Bin-based classification with cross-entropy loss along the $$X$$ and $$Z$$ axes instead of direct regression with smooth L1 loss results in more robust and accurate center localization.
 
-| ![equation1]({{ site.baseurl }}/images/eq1.png) |
 
 $$\begin{align*}
 \text{bin}_{u}^{(p)} &=\left\lfloor\frac{u^{p}-u^{(p)}+\mathcal{S}}{\delta}\right\rfloor \ \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
@@ -107,6 +106,15 @@ $$\begin{align*}
  
 \text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w.l\}}\
 \end{align*}$$
+
+
+
+$$\begin{aligned}
+\mathcal{L}_{\mathrm{bin}}^{(p)} &=\sum_{u \in\{x,z,\theta\}} (\mathcal{F}_{\mathrm{cls}}\(\widehat{\mathrm{bin}}_{u}^{(p)}, \mathrm{bin}_{u}^{(p)})\ +\ \mathcal{F}_{\mathrm{reg}}\(\widehat{\mathrm{res}}_{u}^{(p)}, \mathrm{res}_{u}^{(p)})) , \\
+\mathcal{L}_{\mathrm{res}}^{(p)} &=\sum_{v \in\{y, h, w, l\}} \mathcal{F}_{\mathrm{reg}}(\widehat{\mathrm{res}}_{v}^{(p)}, \mathrm{res}_{v}^{(p)}), \\
+\mathcal{L}_{\mathrm{reg}} &=\frac{1}{N_{\mathrm{pos}}} \sum_{p \in \mathrm{pos}}\left(\mathcal{L}_{\mathrm{bin}}^{(p)}+\mathcal{L}_{\mathrm{res}}^{(p)}\right)
+\end{aligned} $$
+
 
 An h1 header
 ============
