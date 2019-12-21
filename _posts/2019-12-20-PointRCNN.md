@@ -99,6 +99,8 @@ As mentioned above, we also append a box regression head for simultaneously gene
 In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$ , where $$(x, y, z)$$ is the center location of object, $$(h, w, l)$$ is the size of object, and $$ θ $$ is the orientation of object from the BEV.
 [Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length δ $$/delta$$ for representing different centers of object $$(x, z)$$ on the $$X-Z$$ plane. Bin-based classification with cross-entropy loss along the $$X$$ and $$Z$$ axes instead of direct regression with smooth L1 loss results in more robust and accurate center localization.
 
+| ![equation1]({{ site.baseurl }}/images/eq1.png) |
+
 An h1 header
 ============
 
