@@ -13,6 +13,7 @@ This paper has been published in CVPR,2019. The authors of this paper are from *
 * Xiaogang Wang
 * Hongsheng Li
 
+A link to presentation slides of seminar on the topic can be found [here](https://docs.google.com/presentation/d/1ozBEg2wYb63tp_gVPnz_Cjk68T9zBaToIVymJwxjICo/edit?usp=sharing)
 
 ### Contact me
 
