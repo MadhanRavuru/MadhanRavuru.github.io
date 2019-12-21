@@ -75,14 +75,15 @@ points is usually much smaller than background points for a general large-scale 
 
 The formula for focal loss is given by,
 
-$$ L_{\mathrm{focal}}(p_{t}) = -\alpha_{t}(1-p_{t})^{\gamma} \mathrm{log}(p_{t}), $$
-
-$$\\ \\ \text{where} \  p_{t}= 
+$$\begin{aligned}
+L_{\mathrm{focal}}(p_{t}) &= -\alpha_{t}(1-p_{t})^{\gamma} \mathrm{log}(p_{t}), 
+\\ \\ \text{where} \  p_{t} &= 
     \begin{cases}
       p & \text{for foreground point} \\
       1-p & \text{otherwise}
-    \end{cases} $$
-    
+    \end{cases} 
+\end{aligned}$$    
+
 While training point cloud segmentation, the parameters $$\alpha_{t} \text{and} \gamma $$ are chosen as 0.25 and 2 respectively.
 
 | ![FocalLossgraph]({{ site.baseurl }}/images/FocalLossgraph.png) |
@@ -100,20 +101,19 @@ In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, 
 [Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length δ $$/delta$$ for representing different centers of object $$(x, z)$$ on the $$X-Z$$ plane. Bin-based classification with cross-entropy loss along the $$X$$ and $$Z$$ axes instead of direct regression with smooth L1 loss results in more robust and accurate center localization.
 
 
-$$\begin{align*}
+$$\begin{aligned}
 \text{bin}_{u}^{(p)} &=\left\lfloor\frac{u^{p}-u^{(p)}+\mathcal{S}}{\delta}\right\rfloor \ \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
 \text{res}_{u}^{(p)} &= \dfrac{1}{C}\left ( u^{p}-u^{(p)}+\mathcal{S}- \left ( \text{bin}_{u}^{(p)}\cdot \delta + \dfrac{\delta}{2} \right )\right )\  \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
  
 \text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w.l\}}\
-\end{align*}$$
-
+\end{aligned}$$
 
 
 $$\begin{aligned}
-\mathcal{L}_{\mathrm{bin}}^{(p)} &=\sum_{u \in\{x,z,\theta\}} (\mathcal{F}_{\mathrm{cls}}\(\widehat{\mathrm{bin}}_{u}^{(p)}, \mathrm{bin}_{u}^{(p)})\ +\ \mathcal{F}_{\mathrm{reg}}\(\widehat{\mathrm{res}}_{u}^{(p)}, \mathrm{res}_{u}^{(p)})) , \\
+\mathcal{L}_{\mathrm{bin}}^{(p)} &=\sum_{u \in\{x,z,\theta\}} (\mathcal{F}_{\mathrm{cls}}(\widehat{\mathrm{bin}}_{u}^{(p)}, \mathrm{bin}_{u}^{(p)})\ +\ \mathcal{F}_{\mathrm{reg}}(\widehat{\mathrm{res}}_{u}^{(p)}, \mathrm{res}_{u}^{(p)})) , \\
 \mathcal{L}_{\mathrm{res}}^{(p)} &=\sum_{v \in\{y, h, w, l\}} \mathcal{F}_{\mathrm{reg}}(\widehat{\mathrm{res}}_{v}^{(p)}, \mathrm{res}_{v}^{(p)}), \\
 \mathcal{L}_{\mathrm{reg}} &=\frac{1}{N_{\mathrm{pos}}} \sum_{p \in \mathrm{pos}}\left(\mathcal{L}_{\mathrm{bin}}^{(p)}+\mathcal{L}_{\mathrm{res}}^{(p)}\right)
-\end{aligned} $$
+\end{aligned}$$
 
 
 An h1 header
