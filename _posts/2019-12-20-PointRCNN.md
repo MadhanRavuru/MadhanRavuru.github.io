@@ -120,9 +120,9 @@ $$\begin{aligned}
 \text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w,l\}}\
 \end{aligned}$$
 
-In the above formulation of localization targets, $$x^{(p)},y^{(p)},z^{(p)}$$ denote the coordinate of a interested foreground point, $$(x^{p},y^{p},z^{p})$$ is the center coordinate of its corresponding object and $$C$$ is the bin length for normalization. $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the bin classification target and residual regression target respecively. $$\text{res}_{v}^{(p)}$$ is the regression target with smooth $$L$$1 loss formulation.
+In the above formulation of localization targets, $$(x^{(p)},y^{(p)},z^{(p)})$$ denote the coordinate of a interested foreground point, $$(x^{p},y^{p},z^{p})$$ is the center coordinate of its corresponding object and $$C$$ is the bin length for normalization. $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the bin classification target and residual regression target respectively. $$\text{res}_{v}^{(p)}$$ is the regression target with smooth $$L$$1 loss formulation.
 
-In the inference stage, we add the predicted residual to their initial values for directly regressed parameters ($$y,h,w,l$$) and to find the bin-based predicted parameters($$x,z,θ$$), we choose the bin center which has high predicted confidence and later add the predicted residual for obtaining the refined parameters.
+In the inference stage, we add the predicted residual to their initial values, for directly regressed parameters ($$y,h,w,l$$). To find the bin-based predicted parameters ($$x,z,θ$$), we choose the bin center with high predicted confidence and later, add the predicted residual for obtaining the refined parameters.
 
 For training, the overall 3D bounding box regression loss $$\mathcal{L}_{\mathrm{reg}}$$ could then be formulated as,
 
@@ -134,7 +134,7 @@ $$\begin{aligned}
 
 where $$N_{\mathrm{pos}}$$ is the number of foreground points, $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the ground-truth targets, $$\widehat{\mathrm{bin}}_{u}^{(p)}$$ and $$\widehat{\mathrm{res}}_{u}^{(p)}$$ are the predicted bin assignments and residuals of the foreground point $$p$$ respectively. $$\mathcal{F}_{\mathrm{cls}}$$ represents the cross-entropy loss for classification, and $$\mathcal{F}_{\mathrm{reg}}$$ represents the smooth $$L$$1 loss for regression.
 
-For removal of the redundant proposals, non maximum suppression (NMS) based on the oriented IoU from BEV is performed to generate a small number of robust and accurate proposals and are fed to stage-2 network.
+For removal of the redundant proposals, non maximum suppression (NMS) based on the oriented IoU from BEV is performed to generate a small number of robust and accurate proposals. These proposals are then fed to stage-2 network.
 
 
 ### Refining the proposals in the canonical coordinates (Stage 2)
