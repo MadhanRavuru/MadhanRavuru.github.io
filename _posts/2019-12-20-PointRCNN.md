@@ -97,19 +97,26 @@ Focal Loss adds a factor $$(1-p_{t})^{\gamma}$$ to standard cross entropy loss. 
 
 As mentioned above, we also append a box regression head for simultaneously generating 3D proposals with the foreground point segmentation. During training, for each foreground point, we regress 3D bounding box location from the box regression head. Although, the background points are not used for regressing the boxes, these points provide supporting information for the box proposal generation because of the receptive field of the point-cloud network.
 
-In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$ , where $$(x, y, z)$$ is the center location of object, $$(h, w, l)$$ is the size of object, and $$ θ $$ is the orientation of object from the BEV.
-[Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length $$\delta$$ for representing different centers of object $$(x, z)$$ on the $$X-Z$$ plane. Bin-based classification with cross-entropy loss along the $$X$$ and $$Z$$ axes instead of direct regression with smooth L1 loss results in more robust and accurate center localization.
+In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$, where $$(x, y, z)$$ is the center location of object, $$(h, w, l)$$ is the size of object, and $$ θ $$ is the orientation of object from the BEV.
+[Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length $$\delta$$ for representing different centers of object $$(x, z)$$ on the *X*-*Z* plane. We need to perform bin classification along each $$X$$ and $$Z$$ axis, and do residual regression within the classified bin. Thus, localization loss for the $$X$$ or $$Z$$ axis consists of two terms. Bin-based loss formulation instead of direct regression with smooth L1 loss results in more robust and accurate center localization. For estimating box orientation, we divide the orientation $$2\pi$$ into *n* bins and find the bin classification target
+and residual regression target similar to $$x$$ or $$z$$ prediction.
 
-We need to perform bin classification along each $$X$$ and $$Z$$ axis, and do residual regression within the classified bin.
-Thus, localization loss for the X or Z axis consists of two terms. 
-To find the center location $$y$$ along the vertical $$Y$$ axis, we directly use [smooth L1 loss](https://arxiv.org/pdf/1711.06753.pdf) for regression as most object's $$y$$ values are within a very limited range. So, using the smooth $$L$$1 loss is sufficient to obtain accurate $$y$$ values. Also, for the object size $$(h, w, l)$$ estimation, we use smooth $$L$$1  loos to directly regress by calculating residuals w.r.t. the average object size of each class in the entire training set.
+| ![xzestimate]({{ site.baseurl }}/images/xzestimate.png) |
+
+The localization targets are formulated as,
 
 $$\begin{aligned}
 \text{bin}_{u}^{(p)} &=\left\lfloor\frac{u^{p}-u^{(p)}+\mathcal{S}}{\delta}\right\rfloor \ \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
 \text{res}_{u}^{(p)} &= \dfrac{1}{C}\left ( u^{p}-u^{(p)}+\mathcal{S}- \left ( \text{bin}_{u}^{(p)}\cdot \delta + \dfrac{\delta}{2} \right )\right )\  \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
- 
-\text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w.l\}}\
 \end{aligned}$$
+
+To calculate the center location $$y$$ along the vertical $$Y$$ axis, we directly use [smooth L1 loss](https://arxiv.org/pdf/1711.06753.pdf) for regression as most object's $$y$$ values are within a very limited range. So, using the smooth $$L$$1 loss is sufficient to obtain accurate $$y$$ values. Also, for the object size $$(h, w, l)$$ estimation, we use smooth $$L$$1  loss to directly regress by calculating residuals w.r.t. the mean object size of each class in the whole training set. Thus, the localization target for $$y,h,w,l$$ is given by,
+
+$$ 
+\text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w,l\}}\
+$$
+
+In the above formulation of localization targets, $$x^{(p)},y^{(p)},z^{(p)}$$ denote the coordinate of a interested foreground point, $$(x^{p},y^{p},z^{p})$$ is the center coordinate of its corresponding object and $$C$$ is the bin length for normalization. $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the bin classification target and residual regression target respecively. $$\text{res}_{v}^{(p)}$$ is the regression target with smooth $$L$$1 loss formulation.
 
 
 $$\begin{aligned}
