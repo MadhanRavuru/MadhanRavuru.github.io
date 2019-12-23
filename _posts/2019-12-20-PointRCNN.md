@@ -63,7 +63,7 @@ In contrast to the mentioned related work, PointRCNN achieves robust 3D object d
 
 | ![overview]({{ site.baseurl }}/images/overview.png) |
 
-### Bottom-up 3D proposal generation via point cloud segmentation (Stage 1)
+### Bottom-up 3D proposal generation (Stage 1)
 
 We utilize the [PointNet++](https://arxiv.org/abs/1706.02413) with multi-scale grouping as our backbone network to learn discriminative point-wise features for describing the raw point clouds. An alternative point-cloud network structures, such as VoxelNet with [sparse convolutions](https://arxiv.org/abs/1711.10275), could also be adopted as our backbone network.
 We learn point-wise features for the segmentation of the raw point cloud of the whole scene into foreground and background points. Also, simultaneously we generate 3D proposals from the segmented foreground points. Thus, our method avoids using a large set of predefined 3D boxes in the 3D space and limits the search space for 3D object proposal generation.
@@ -98,32 +98,46 @@ Focal Loss adds a factor $$(1-p_{t})^{\gamma}$$ to standard cross entropy loss. 
 As mentioned above, we also append a box regression head for simultaneously generating 3D proposals with the foreground point segmentation. During training, for each foreground point, we regress 3D bounding box location from the box regression head. Although, the background points are not used for regressing the boxes, these points provide supporting information for the box proposal generation because of the receptive field of the point-cloud network.
 
 In the LiDAR coordinate system, a 3D bounding box is represented as $$(x, y, z, h, w, l, θ)$$, where $$(x, y, z)$$ is the center location of object, $$(h, w, l)$$ is the size of object, and $$ θ $$ is the orientation of object from the BEV.
-[Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length $$\delta$$ for representing different centers of object $$(x, z)$$ on the *X*-*Z* plane. We need to perform bin classification along each $$X$$ and $$Z$$ axis, and do residual regression within the classified bin. Thus, localization loss for the $$X$$ or $$Z$$ axis consists of two terms. Bin-based loss formulation instead of direct regression with smooth L1 loss results in more robust and accurate center localization. For estimating box orientation, we divide the orientation $$2\pi$$ into *n* bins and find the bin classification target
+[Direct regression is presumably harder task and can introduce instability](https://arxiv.org/abs/1901.02970) during training. To limit the generated 3D box proposals, we introduce bin-based regression loss for estimation of 3D bounding boxes. For estimating object center location, we split the each foreground point surrounding area into a series of discrete bins along the $$X$$ and $$Z$$ axes. Along $$X$$ and $$Z$$ axis of current foreground point, we set 1D search range $$S$$ and divide it into bins of uniform length $$\delta$$ for representing different centers of object $$(x, z)$$ on the *X*-*Z* plane. We need to perform bin classification along each $$X$$ and $$Z$$ axis, and do residual regression within the classified bin. Thus, localization loss for the $$X$$ or $$Z$$ axis consists of two terms. Bin-based loss formulation instead of direct regression with smooth $$L$$1 loss results in more robust and accurate center localization. For estimating box orientation, we divide the orientation $$2\pi$$ into *n* bins and find the bin classification target
 and residual regression target similar to $$x$$ or $$z$$ prediction.
 
 | ![xzestimate]({{ site.baseurl }}/images/xzestimate.png) |
+|:--:| 
+| *Illustration of bin-based localization* |
 
-The localization targets are formulated as,
+The localization target is formulated as,
 
 $$\begin{aligned}
 \text{bin}_{u}^{(p)} &=\left\lfloor\frac{u^{p}-u^{(p)}+\mathcal{S}}{\delta}\right\rfloor \ \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
 \text{res}_{u}^{(p)} &= \dfrac{1}{C}\left ( u^{p}-u^{(p)}+\mathcal{S}- \left ( \text{bin}_{u}^{(p)}\cdot \delta + \dfrac{\delta}{2} \right )\right )\  \ \forall \ u\in{\{x,z,\theta\}}\ ,\\
 \end{aligned}$$
 
+
 To calculate the center location $$y$$ along the vertical $$Y$$ axis, we directly use [smooth L1 loss](https://arxiv.org/pdf/1711.06753.pdf) for regression as most object's $$y$$ values are within a very limited range. So, using the smooth $$L$$1 loss is sufficient to obtain accurate $$y$$ values. Also, for the object size $$(h, w, l)$$ estimation, we use smooth $$L$$1  loss to directly regress by calculating residuals w.r.t. the mean object size of each class in the whole training set. Thus, the localization target for $$y,h,w,l$$ is given by,
 
-$$ 
+
+$$\begin{aligned}
 \text{res}_{v}^{(p)} &= v^{p}-v^{(p)}\ \ \ \forall \ v\in{\{y,h,w,l\}}\
-$$
+\end{aligned}$$
 
 In the above formulation of localization targets, $$x^{(p)},y^{(p)},z^{(p)}$$ denote the coordinate of a interested foreground point, $$(x^{p},y^{p},z^{p})$$ is the center coordinate of its corresponding object and $$C$$ is the bin length for normalization. $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the bin classification target and residual regression target respecively. $$\text{res}_{v}^{(p)}$$ is the regression target with smooth $$L$$1 loss formulation.
 
+In the inference stage, we add the predicted residual to their initial values for directly regressed parameters ($$y,h,w,l$$) and to find the bin-based predicted parameters($$x,z,θ$$), we choose the bin center which has high predicted confidence and later add the predicted residual for obtaining the refined parameters.
+
+For training, the overall 3D bounding box regression loss $$\mathcal{L}_{\mathrm{reg}}$$ could then be formulated as,
 
 $$\begin{aligned}
 \mathcal{L}_{\mathrm{bin}}^{(p)} &=\sum_{u \in\{x,z,\theta\}} (\mathcal{F}_{\mathrm{cls}}(\widehat{\mathrm{bin}}_{u}^{(p)}, \mathrm{bin}_{u}^{(p)})\ +\ \mathcal{F}_{\mathrm{reg}}(\widehat{\mathrm{res}}_{u}^{(p)}, \mathrm{res}_{u}^{(p)})) , \\
 \mathcal{L}_{\mathrm{res}}^{(p)} &=\sum_{v \in\{y, h, w, l\}} \mathcal{F}_{\mathrm{reg}}(\widehat{\mathrm{res}}_{v}^{(p)}, \mathrm{res}_{v}^{(p)}), \\
 \mathcal{L}_{\mathrm{reg}} &=\frac{1}{N_{\mathrm{pos}}} \sum_{p \in \mathrm{pos}}\left(\mathcal{L}_{\mathrm{bin}}^{(p)}+\mathcal{L}_{\mathrm{res}}^{(p)}\right)
 \end{aligned}$$
+
+where $$N_{\mathrm{pos}}$$ is the number of foreground points, $$\text{bin}_{u}^{(p)}$$ and $$\text{res}_{u}^{(p)}$$ are the ground-truth targets, $$\widehat{\mathrm{bin}}_{u}^{(p)}$$ and $$\widehat{\mathrm{res}}_{u}^{(p)}$$ are the predicted bin assignments and residuals of the foreground point $$p$$ respectively. $$\mathcal{F}_{\mathrm{cls}}$$ represents the cross-entropy loss for classification, and $$\mathcal{F}_{\mathrm{reg}}$$ represents the smooth $$L$$1 loss for regression.
+
+For removal of the redundant proposals, non maximum suppression (NMS) based on the oriented IoU from BEV is performed to generate a small number of robust and accurate proposals and are fed to stage-2 network.
+
+
+### Refining the proposals in the canonical coordinates (Stage 2)
 
 | ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
 
