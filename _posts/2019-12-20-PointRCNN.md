@@ -143,6 +143,29 @@ Stage-2 network performs refinement of 3D generated proposals in the canonical c
 #### Point cloud region pooling
 We enlarge each 3D box proposal, $$\mathbf{b}_{i} = (x_i, y_i, z_i, h_i, w_i, l_i , \theta_i)$$ from stage-1 to get new 3D box, $$\mathbf{b}_{i}^{e} = (x_i, y_i, z_i, h_i+\eta, w_i+\eta, l_i+\eta , \theta_i)$$. This helps us in encoding additional contextual information, where $$\eta$$ is some constant value for enlarging the bounding box. An inside/outside test is performed for each point $$p = (x^{(p)},y^{(p)},z^{(p)})$$, to find whether the point p lies inside $$\mathbf{b}_{i}^{e}$$. If the point lies inside, the point and its features are kept for refining the box $$\mathbf{b}_{i}$$. The box proposals, which does not have inside points are removed. The associated features with the inside point *p* include its coordinates $$(x^{(p)},y^{(p)},z^{(p)}) \in\mathbb{R}^{3}$$ and laser reflection intensity $$r^{(p)} \in \mathbb{R}$$, its 'C'-dimensional learned point feature $$\mathbf{f}^{(p)} \in \mathbb{R}^{C}$$ and predicted segmentation mask $$m^{(p)} \in \{0, 1\}$$ from stage-1. The segmentation mask $$m^{(p)}$$ is included to differentiate between predicted foreground/background points within the enlarged bounding box $$\mathbf{b}_{i}^{e}$$. The learned point feature $$\mathbf{f}^{(p)}$$ encodes valuable information regarding learning for segmentation and proposal generation and is therefore included.
 
+#### Canonical 3D bounding box refinement
+
+The pooled points and their corresponding features for each proposal are fed to our stage-2 sub-network for refining the 3D box locations and foreground object confidence. 
+
+##### Canonical transformation
+For better learning of local spatial features, we transform the pooled points of each proposal to canonical coordinate system of the corresponding 3D proposal. The canonical coordinate system for each 3D box proposal implies that (1) the origin is located at the box proposal centre; (2) the local $${X}'$$ and $${Z}'$$ axes are parallel to the ground
+with $${X}'$$ pointing in the head direction of proposal with $${Z}'$$ axis perpendicular to $${X}'$$; (3) the $${Y}'$$ axis remains same as the LiDAR coordinate system. By applying proper rotation and translation, coordinates *p* of all pooled points of the box proposal in the LiDAR coordinate system are transformed to the canonical coordinate system as $$\tilde{p}$$.
+
+| ![canonical]({{ site.baseurl }}/images/canonical.png) |
+|:--:| 
+| *Illustration of canonical transformation* |
+
+##### Feature learning for box proposal refinement
+We combine the global semantic features $$\mathbf{f}^{(p)}$$ from stage-1 with the transformed local spatial features $$\tilde{p}$$ for further box and confidence refinement. The canonical transformation inevitably loses depth information of each object. For the compensation of the lost depth information, the features of point *p* are included with distance to the sensor, *i.e.*, $$d^{(p)} = \sqrt{({x^{(p)}})^{2} + ({y^{(p)}})^{2} + ({z^{(p)}})^{2}}$$. The local spatial features $$\tilde{p}$$, predicted segmentation mask $$m^{(p)}$$, laser reflection intensity $$r^{(p)}$$, and distance $$d^{(p)}$$ of associated points for each proposal are first concatenated and fed to several fully-connected layers to get same dimension as the global features $$\mathbf{f}^{(p)}$$. Then, the local and global features are merged to get discriminative feature vector for confidence classification and box refinement.
+
+##### Losses for box proposal refinement
+The similar bin-based regression losses, as used in box proposal generation, are adopted for refinement of the box proposal.
+For learning box refinement, we assign a ground-truth box to a 3D box proposal, if their 3D IoU is greater than 0.55. The 3D proposals and their respective 3D ground-truth boxes are transformed into canonical coordinate system. This means that 3D proposal $$\mathbf{b}_{i} = (x_i, y_i, z_i, h_i, w_i, l_i , \theta_i)$$ and 3D ground-truth box $$\mathbf{b}_{i}^{\mathrm{gt}} = (x_i^{\mathrm{gt}}, y_i^{\mathrm{gt}}, z_i^{\mathrm{gt}}, h_i^{\mathrm{gt}}, w_i^{\mathrm{gt}}, l_i^{\mathrm{gt}} , \theta_i^{\mathrm{gt}})$$ will be transformed to $$\tilde{\mathbf{b}}_{i} = (0,0,0, h_i, w_i, l_i,0)$$ and $$\tilde{\mathbf{b}}_{i}^{\mathrm{gt}} = (x_i^{\mathrm{gt}}-x_i, y_i^{\mathrm{gt}}-y_i, z_i^{\mathrm{gt}}-z_i, h_i^{\mathrm{gt}}, w_i^{\mathrm{gt}}, l_i^{\mathrm{gt}} , \theta_i^{\mathrm{gt}}-\theta_i)$$ respectively. Now, we set smaller search range $$S$$ for refining the locations of 3D proposals with training targets for the *i*th box proposal’s center location, $$\mathrm{bin}_{\Delta{x}}^i,\mathrm{bin}_{\Delta{z}}^i,\mathrm{res}_{\Delta{x}}^i,\mathrm{res}_{\Delta{z}}^i,\mathrm{res}_{\Delta{y}}^i$$. We directly regress the box size residual, $$\mathrm{res}_{\Delta{h}}^i,\mathrm{res}_{\Delta{w}}^i,\mathrm{res}_{\Delta{l}}^i$$ w.r.t to average size of object of each class in the whole training set. As the 3D IoU between 3D proposal and its ground-truth box is atleast 0.55, we perform refinement of box orientation, assuming that the angular difference w.r.t. the ground-truth orientation, $$\theta_i^{\mathrm{gt}}-\theta_i$$ lies in the interval $$\left [ -\dfrac{\pi}{4},\dfrac{\pi}{4} \right ]$$. So, we divide $$\dfrac{\pi}{2}$$ into uniform bins of size $$\omega$$ and set the bin-based orientation targets as,
+
+$$\begin{aligned}
+\text{bin}_{\Delta{\theta}}^{i} &=\left\lfloor\frac{\theta_i^{\mathrm{gt}}-\theta_i +\frac{\pi}{4}}{\omega}\right\rfloor,\\
+\text{res}_{\Delta{\theta}}^{i} &=\dfrac{2}{\omega}\left ( {\theta_i^{\mathrm{gt}}-\theta_i +\frac{\pi}{4}} - \left ( \text{bin}_{\Delta{\theta}}^{i} \cdot \omega + \dfrac{\omega}{2} \right ) \right )
+\end{aligned}$$
 | ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
 
 An h1 header
