@@ -187,7 +187,7 @@ The evaluation of PointRCNN on the challenging KITTI dataset and comparison with
 
 Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have small size, more details of pedestrian can be captured by image rather than point cloud, and thus, performance of our method is less.
 
-| ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
+| ![testsplit]({{ site.baseurl }}/images/test_split.png) |
 |:--:| 
 | *Performance comparison of 3D object detection with different methods on KITTI test split* |
 
@@ -195,7 +195,7 @@ Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 fo
 
 The performance of bottom-up proposal generation in PointRCNN is evaluated from recall with different number of Region of Interests(RoIs) and 3D IoU threshold for the car class at moderate difficulty on the val split. Our method achieves remarkable recall in comparison with MV3D and AVOD. Only these two methods reported the number of recall. Though the recall of proposal generations are not directly related to the final 3D detection performance, the higher recall of PointRCNN method conveys accuracy and robustness of bottom-up proposal generation network.
 
-| ![recalltable]({{ site.baseurl }}/images/recalltable.png) |
+| ![recalltable]({{ site.baseurl }}/images/recalltabulated.png) |
 |:--:| 
 | *Recall of proposal generation network for car class at moderate difficulty on val split* |
 
