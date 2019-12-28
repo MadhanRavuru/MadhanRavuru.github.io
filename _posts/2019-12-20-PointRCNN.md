@@ -174,19 +174,34 @@ where $$\mathcal{B}$$ is the 3D proposals set from stage-1 and $$\mathcal{B}_\ma
 $$\tilde{b}_{i}$$ and $$\tilde{b}_{i}^{\mathrm{gt}}$$. Finally, oriented NMS with BEV IoU threshold 0.01 is applied to remove the overlapping bounding boxes and generate the 3D refined bounding boxes.
 
 ## Experiments and Results
-The evaluation of PointRCNN on the challenging Kitti dataset and comparison with state-of-the-art 3D object detection methods is performed. Many ablation studies for the analysis of PointRCNN is also conducted.
+
+The qualitative results for car detection using PointRCNN method are shown in the below figure. For each sample, the upper part is the RGB image and lower part is the corresponding point cloud representation. Note that the image in the upper part for each sample is just for better visualization. PointRCNN takes only the point cloud as input for the generation of 3D object detection.  Detected car objects are enclosed with green 3D bounding boxes in both upper and lower parts. The driving direction(orientation) for each object is shown by a X mark in the upper part and a red tube in the lower part.
 
 | ![experiment]({{ site.baseurl }}/images/experiment.png) |
+|:--:| 
+| *Qualitative results of PointRCNN on the KITTI test split* |
+
+The evaluation of PointRCNN on the challenging KITTI dataset and comparison with state-of-the-art 3D object detection methods is performed. Many ablation studies for the analysis of PointRCNN are also conducted.
 
 ### Results of official Kitti test split
 
-Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have size, more details of pedestrian can be captured by image than point cloud, and thus, performance of our method is less.
+Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have small size, more details of pedestrian can be captured by image rather than point cloud, and thus, performance of our method is less.
 
 | ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
+|:--:| 
+| *Performance comparison of 3D object detection with different methods on KITTI test split* |
 
 ### Evaluation of 3D proposal generation
 
+The performance of bottom-up proposal generation in PointRCNN is evaluated from recall with different number of Region of Interests(RoIs) and 3D IoU threshold for the car class at moderate difficulty on the val split. Our method achieves remarkable recall in comparison with MV3D and AVOD. Only these two methods reported the number of recall. Though the recall of proposal generations are not directly related to the final 3D detection performance, the higher recall of PointRCNN method conveys accuracy and robustness of bottom-up proposal generation network.
 
+| ![recalltable]({{ site.baseurl }}/images/recalltable.png) |
+|:--:| 
+| *Recall of proposal generation network for car class at moderate difficulty on val split* |
+
+### Ablation Study
+
+#### 
 
 An h1 header
 ============
