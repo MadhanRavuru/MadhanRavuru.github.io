@@ -1,10 +1,10 @@
 ---
 layout: post
-title: PointRCNN: 3D Object Proposal generation and detection from Point cloud 
+title: PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud 
 mathjax: true
 ---
 
-# PointRCNN: 3D Object Proposal generation and detection from Point cloud
+# PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud
 
 ## Introduction
 
@@ -173,7 +173,20 @@ $$\mathcal{L}_{\mathrm{refine}} =\dfrac{1}{\left \| \mathcal{B} \right \|} \sum_
 where $$\mathcal{B}$$ is the 3D proposals set from stage-1 and $$\mathcal{B}_\mathrm{pos}$$ denote the positive proposals for regression. The estimated confidence of $$\tilde{b}_{i}$$ and corresponding label are represented by $$\mathrm{prob}_{i}$$ and $$\mathrm{label}_{i}$$ respectively. The cross entropy loss for supervision of the predicted confidence is denoted by $$\mathcal{F}_{\mathrm{cls}}$$. $$\mathcal{\tilde{L}}_{\mathrm{bin}}^{(i)}$$ and $$\mathcal{\tilde{L}}_{\mathrm{res}}^{(i)}$$ are classification and regression losses similar to $$\mathcal{L}_{\mathrm{bin}}^{(p)}$$  and $$\mathcal{L}_{\mathrm{res}}^{(p)}$$ respectively with new targets calculated by 
 $$\tilde{b}_{i}$$ and $$\tilde{b}_{i}^{\mathrm{gt}}$$. Finally, oriented NMS with BEV IoU threshold 0.01 is applied to remove the overlapping bounding boxes and generate the 3D refined bounding boxes.
 
+## Experiments and Results
+The evaluation of PointRCNN on the challenging Kitti dataset and comparison with state-of-the-art 3D object detection methods is performed. Many ablation studies for the analysis of PointRCNN is also conducted.
+
+| ![experiment]({{ site.baseurl }}/images/experiment.png) |
+
+### Results of official Kitti test split
+
+Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have size, more details of pedestrian can be captured by image than point cloud, and thus, performance of our method is less.
+
 | ![testsplit]({{ site.baseurl }}/images/testsplit.png) |
+
+### Evaluation of 3D proposal generation
+
+
 
 An h1 header
 ============
