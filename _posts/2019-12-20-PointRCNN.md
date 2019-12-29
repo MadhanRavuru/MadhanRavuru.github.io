@@ -15,6 +15,7 @@ generate 3D point clouds. The detection of 3D objects with point clouds still fa
 irregular data format and sparse representation of point cloud with large search space. In the below figure, we can see the
 7 DoF of 3D object detection (position and dimensions of the bounding box along with box orientation).
 </p>
+
 | ![boundingbox]({{ site.baseurl }}/images/boundbox.png) |
 |:--:| 
 | *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)* |
