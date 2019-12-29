@@ -187,9 +187,14 @@ The evaluation of PointRCNN on the challenging KITTI dataset and comparison with
 
 Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have small size, more details of pedestrian can be captured by image rather than point cloud, and thus, performance of our method is less.
 
-| ![testsplit]({{ site.baseurl }}/images/test_split.png) |
+
+| ![testsplitcar]({{ site.baseurl }}/images/testsplitcar.png) |
 |:--:| 
-| *Performance comparison of 3D object detection with different methods on KITTI test split* |
+| *Performance comparison of 3D car detection with different methods on KITTI test split* |
+
+| ![testsplitpc]({{ site.baseurl }}/images/testsplitpc.png) |
+|:--:| 
+| *Performance comparison of 3D pedestrian and cyclist detection with different methods on KITTI test split* |
 
 ### Evaluation of 3D proposal generation
 
