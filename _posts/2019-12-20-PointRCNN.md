@@ -224,10 +224,7 @@ We enlarge each box proposal $${b}_{i}$$ by a margin $$\eta$$ to get new 3D box 
 | *Performance with different value of context width $$\eta$$* |
 
 #### Losses of 3D bounding box regression
-We have proposed the bin-based localization for the generation of 3D box proposals. We will now compare the performances with different types of 3D box regression loss used for stage-1 sub-network, which include the residual-based loss ([RB-loss](https://arxiv.org/abs/1711.06396)), residual-cos-based loss (RCB-loss), corner loss ([CN-loss](https://arxiv.org/abs/1712.02294)), partial-bin-based loss ([PBB-loss](https://arxiv.org/abs/1711.08488)), and our full bin-based loss (BB-loss). RCB-loss encodes ∆θ of RB-loss by (cos(∆θ), sin(∆θ)) to remove the ambiguity of angle regression.
-Using 100 proposals from stage-1, recall curves with IoU thresholds 0.5 and 0.7 are shown below. Our full bin-based
-loss function has higher recall and converges faster with both IoU thresholds in comparison to all other loss functions. The PBB-loss achieves similar recall as BB-loss with slow convergence speed. Both PBB-loss and BB-loss have significantly higher
-recall than other losses. By improving the angle regression targets, the improved RCB-loss shows good recall than RB-loss.
+We have proposed the bin-based localization for the generation of 3D box proposals. We will now compare the performances with different types of 3D box regression loss used for stage-1 sub-network, which include the residual-based loss ([RB-loss](https://arxiv.org/abs/1711.06396)), residual-cos-based loss (RCB-loss), corner loss ([CN-loss](https://arxiv.org/abs/1712.02294)), partial-bin-based loss ([PBB-loss](https://arxiv.org/abs/1711.08488)), and our full bin-based loss (BB-loss). RCB-loss encodes $$\delta\theta$$ of RB-loss by $$(cos(\delta\theta), sin(\delta\theta))$$ to remove the ambiguity of angle regression. Using 100 proposals from stage-1, recall curves with IoU thresholds 0.5 and 0.7 are shown below. Our full bin-based loss function has higher recall and converges faster with both IoU thresholds in comparison to all other loss functions. The PBB-loss achieves similar recall as BB-loss with slow convergence speed. Both PBB-loss and BB-loss have significantly higher recall than other losses. By improving the angle regression targets, the improved RCB-loss shows good recall than RB-loss.
 
 
 | ![recallcurve]({{ site.baseurl }}/images/recallcurve.png) |
@@ -235,163 +232,16 @@ recall than other losses. By improving the angle regression targets, the improve
 | *Recall curves with different bounding box regression loss function* |
 
 ## Conclusion
+A novel two-stage 3D object detection framework (PointRCNN), which uses only raw 3D point cloud as input and achieves accurate and robust 3D object detection performance. 3D proposals are generated directly from point cloud in a bottom-up manner in our proposed stage-1 sub-network. The proposed bin-based localization loss achieves significantly higher recall than other 3D box regression losses. For stage-2 sub-network, point cloud region pooling with optimal $$\eta$$ results in good performance. The refinement of proposals are performed in canonical coordinates by combining global features and local spatial features. The experiments show that PointRCNN performs well in comparison to previous state-of-the-art methods with remarkable margins on KITTI dataset.
+
+But, the method does not perform well for pedestrian detection. Also, PointRCNN was never tested for multi-class 3D detection. The author assumes that in autonomous driving scenes, the 3D objects are naturally well-separated. This may not be true for multi-class 3D detection. The problem with multi-class detection is that, when objects are closeby, the 3D ground-truth boxes might be overlapping and include noisy foreground points of other objects. So, PointRCNN might not perfrom well for multi-class 3D detection.
 
 
-An h1 header
-============
+## Practical Challenges
 
-Paragraphs are separated by a blank line.
+For multi-class 3D detection, we encounter class imbalance problem. As cars are most prevalent on roads, the model might perform well for cars, when compared to other 3D objects. Focal loss should be used to remove class imbalance. 
 
-2nd paragraph. *Italic*, **bold**, and `monospace`. Itemized lists
-look like:
+For achieving accurate and robust 3D object detections, autonomous vehicles are usually equipped with different sensors such as cameras, LiDARs and Radars. In order to exploit their complementary properties, multiple sensing modalities can be fused.
+For example, camera images can provide detailed texture information of a scene, but cannot directly provide depth information. LiDARs on the other hand, provide accurate depth information of the surroundings through 3D points. But, they cannot capture the fine texture information of objects, and 3D points become sparse with far away objects. Radars have low resolution and classifying objects becomes a challenge. We need to fuse data from different sensors to achieve reliable autonomous driving. But, fusing of different data from sensors is key question. [Deep Multi-modal approach](https://arxiv.org/abs/1902.07830) has been developed to carry out 3D object detection by fusing camera images, LIDAR point clouds and Radars.
 
-  * this one
-  * that one
-  * the other one
-
-Note that --- not considering the asterisk --- the actual text
-content starts at 4-columns in.
-
-> Block quotes are
-> written like so.
->
-> They can span multiple paragraphs,
-> if you like.
-
-Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex., "it's all
-in chapters 12--14"). Three dots ... will be converted to an ellipsis.
-Unicode is supported. ☺
-
-
-
-An h2 header
-------------
-
-Here's a numbered list:
-
- 1. first item
- 2. second item
- 3. third item
-
-Note again how the actual text starts at 4 columns in (4 characters
-from the left side). Here's a code sample:
-
-    # Let me re-iterate ...
-    for i in 1 .. 10 { do-something(i) }
-
-As you probably guessed, indented 4 spaces. By the way, instead of
-indenting the block, you can use delimited blocks, if you like:
-
-~~~
-define foobar() {
-    print "Welcome to flavor country!";
-}
-~~~
-
-(which makes copying & pasting easier). You can optionally mark the
-delimited block for Pandoc to syntax highlight it:
-
-~~~python
-import time
-# Quick, count to ten!
-for i in range(10):
-    # (but not *too* quick)
-    time.sleep(0.5)
-    print i
-~~~
-
-
-
-### An h3 header ###
-
-Now a nested list:
-
- 1. First, get these ingredients:
-
-      * carrots
-      * celery
-      * lentils
-
- 2. Boil some water.
-
- 3. Dump everything in the pot and follow
-    this algorithm:
-
-        find wooden spoon
-        uncover pot
-        stir
-        cover pot
-        balance wooden spoon precariously on pot handle
-        wait 10 minutes
-        goto first step (or shut off burner when done)
-
-    Do not bump wooden spoon or it will fall.
-
-Notice again how text always lines up on 4-space indents (including
-that last line which continues item 3 above).
-
-Here's a link to [a website](http://foo.bar), to a [local
-doc](local-doc.html), and to a [section heading in the current
-doc](#an-h2-header). Here's a footnote [^1].
-
-[^1]: Footnote text goes here.
-
-Tables can look like this:
-
-size  material      color
-----  ------------  ------------
-9     leather       brown
-10    hemp canvas   natural
-11    glass         transparent
-
-Table: Shoes, their sizes, and what they're made of
-
-(The above is the caption for the table.) Pandoc also supports
-multi-line tables:
-
---------  -----------------------
-keyword   text
---------  -----------------------
-red       Sunsets, apples, and
-          other red or reddish
-          things.
-
-green     Leaves, grass, frogs
-          and other things it's
-          not easy being.
---------  -----------------------
-
-A horizontal rule follows.
-
-***
-
-Here's a definition list:
-
-apples
-  : Good for making applesauce.
-oranges
-  : Citrus!
-tomatoes
-  : There's no "e" in tomatoe.
-
-Again, text is indented 4 spaces. (Put a blank line between each
-term/definition pair to spread things out more.)
-
-Here's a "line block":
-
-| Line one
-|   Line too
-| Line tree
-
-and images can be specified like so:
-
-![example image](example-image.jpg "An exemplary image")
-
-Inline math equations go in like so: $\omega = d\phi / dt$. Display
-math should get its own line and be put in in double-dollarsigns:
-
-$$I = \int \rho R^{2} dV$$
-
-And note that you can backslash-escape any punctuation characters
-which you wish to be displayed literally, ex.: \`foo\`, \*bar\*, etc.
-
+> written on $$30^{th}$$ December, 2019.
