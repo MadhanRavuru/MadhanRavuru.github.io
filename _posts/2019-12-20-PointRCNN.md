@@ -185,12 +185,13 @@ The evaluation of PointRCNN on the challenging KITTI dataset and comparison with
 
 ### Results of official Kitti test split
 
-Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D detection of car and cyclist. Most of the methods use RGB image and point cloud as input, while PointRCNN uses only point cloud as input and achieves better performance. For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. As pedestrians have small size, more details of pedestrian can be captured by image rather than point cloud, and thus, performance of our method is less.
-
+Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D car detection. Other methods include [MV3D](https://arxiv.org/abs/1611.07759), [UberATG-ContFuse](http://openaccess.thecvf.com/content_ECCV_2018/papers/Ming_Liang_Deep_Continuous_Fusion_ECCV_2018_paper.pdf), [AVOD-FPN](https://arxiv.org/abs/1712.02294), [F-PointNet](https://arxiv.org/abs/1711.08488), [VoxelNet](https://arxiv.org/abs/1711.06396) and [SECOND](https://www.mdpi.com/1424-8220/18/10/3337). MV3D, UberATG-ContFuse, AVOD-FPN and F-PointNet uses both RGB image and point cloud as input, while VoxelNet, SECOND and PointRCNN(our method) uses only point cloud as input. 
 
 | ![testsplitcar]({{ site.baseurl }}/images/testsplitcar.png) |
 |:--:| 
 | *Performance comparison of 3D car detection with different methods on KITTI test split* |
+
+For pedestrian detection, PointRCNN does not perform well in comparison to methods with multiple sensors. But, in comparison with previous LiDAR-only methods, PointRCNN achieves comparable results, As pedestrians have small size, more details of pedestrian can be captured by image rather than point cloud, and thus, performance of our method is less. For the cyclist detection, our method performs the best on all three difficulties.
 
 | ![testsplitother]({{ site.baseurl }}/images/testsplitother.png) |
 |:--:| 
@@ -205,8 +206,21 @@ The performance of bottom-up proposal generation in PointRCNN is evaluated from 
 | *Recall of proposal generation network for car class at moderate difficulty on val split* |
 
 ### Ablation Study
+For analyzing the effectiveness of various components of PointRCNN, extensive ablation experimens were conducted. All experiments were evaluated on *val* split with car class.
 
-#### 
+#### Different inputs for the refinement sub-network
+The inputs of the refinement sub-network include the merged features, which include pooled features of each pooled point and canonically transformed coordinates. We make different combinations of the features fed to the refinement sub-network by removing one feature and keeping all others unchanged and note the effect of each feature. Stage-1 sub-network is same for all experiments to have fair comparison. The results are tabulated below.  $$AP_E , AP_M$$ and $$AP_H$$ represent the average precision for easy, moderate, hard difficulty respectively and CT denotes canonical transformation. We can see that without the CT of pooled points, the refinement sub-network performance drops significantly. This means that transformation into canonical coordinate system helps in learning better local spatial features by eliminating rotation and translation variations and thereby, improves the efficiency of feature learning in stage-2. Slight decrease in performances are observed with removal of stage-1 features $$\mathbf{f}^{(p)}$$ learned from point cloud segmentation, camera depth information
+$$d^{(p)}$$ and segmentation mask $$m^{(p)}$$ one at a time. $$\mathbf{f}^{(p)}$$ is needed to take advantages of learning for semantic segmentation in the stage-1. $$d^{(p)}$$ helps in compensation of distance information eliminated during CT and $$m^{(p)}$$ is used to differentiate between foreground and background points in the pooled regions. Thus, in order to achieve good final performance, we need to consider all features for the refinement sub-network.
+
+| ![ablation]({{ site.baseurl }}/images/ablation.png) |
+|:--:| 
+| *Performance with different input combinations of refinement network* |
+
+#### Context-aware point cloud pooling
+
+| ![contextwidth]({{ site.baseurl }}/images/contextwidth.png) |
+|:--:| 
+| *Performance with different value of context width $$\eta$$* |
 
 An h1 header
 ============
