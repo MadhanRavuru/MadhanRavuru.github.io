@@ -7,14 +7,14 @@ mathjax: true
 # PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud
 
 ## Introduction
-<p class="text-justify">
+
 Detecting and localizing objects in images and videos is a key component of many real-world applications, such as autonomous 
 driving and domestic robots. The CNN machinery for 2D object detection with 4 Degrees-of-Freedom (DoF) is mature to handle 
 large variations of viewpoints and background clutters in images. In autonomous driving, LiDAR sensors are mostly used to 
 generate 3D point clouds. The detection of 3D objects with point clouds still faces great challenges because of the
 irregular data format and sparse representation of point cloud with large search space. In the below figure, we can see the
 7 DoF of 3D object detection (position and dimensions of the bounding box along with box orientation).
-</p>
+
 
 | ![boundingbox]({{ site.baseurl }}/images/boundbox.png) |
 |:--:| 
