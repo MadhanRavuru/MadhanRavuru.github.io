@@ -217,10 +217,25 @@ $$d^{(p)}$$ and segmentation mask $$m^{(p)}$$ one at a time. $$\mathbf{f}^{(p)}$
 | *Performance with different input combinations of refinement network* |
 
 #### Context-aware point cloud pooling
+We enlarge each box proposal $${b}_{i}$$ by a margin $$\eta$$ to get new 3D box $${b}_{i}^{e}$$ for storing additional contextual information. The below table shows the performance for different pooled context widths $$\eta$$. For $$\eta=1.0m$$, we get the best performance for all difficulty levels. $$AP_H$$ drops significantly, when no pooling of contextual information is performed. The hard cases are those, where the object is occluded or far away from sensor. The number of points in generated proposals for such cases are usually smaller and eventually, they need more context information for classification and proposal refinement. Also, when $$\eta$$ is too large, the performance decreases. This may be due to inclusion of noisy foreground points of other objects for the pooled region of current proposals. 
 
 | ![contextwidth]({{ site.baseurl }}/images/contextwidth.png) |
 |:--:| 
 | *Performance with different value of context width $$\eta$$* |
+
+#### Losses of 3D bounding box regression
+We have proposed the bin-based localization for the generation of 3D box proposals. We will now compare the performances with different types of 3D box regression loss used for stage-1 sub-network, which include the residual-based loss ([RB-loss](https://arxiv.org/abs/1711.06396)), residual-cos-based loss (RCB-loss), corner loss ([CN-loss](https://arxiv.org/abs/1712.02294)), partial-bin-based loss ([PBB-loss](https://arxiv.org/abs/1711.08488)), and our full bin-based loss (BB-loss). RCB-loss encodes ∆θ of RB-loss by (cos(∆θ), sin(∆θ)) to remove the ambiguity of angle regression.
+Using 100 proposals from stage-1, recall curves with IoU thresholds 0.5 and 0.7 are shown below. Our full bin-based
+loss function has higher recall and converges faster with both IoU thresholds in comparison to all other loss functions. The PBB-loss achieves similar recall as BB-loss with slow convergence speed. Both PBB-loss and BB-loss have significantly higher
+recall than other losses. By improving the angle regression targets, the improved RCB-loss shows good recall than RB-loss.
+
+
+| ![recallcurve]({{ site.baseurl }}/images/recallcurve.png) |
+|:--:| 
+| *Recall curves with different bounding box regression loss function* |
+
+## Conclusion
+
 
 An h1 header
 ============
