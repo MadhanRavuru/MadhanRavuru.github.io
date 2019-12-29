@@ -19,10 +19,6 @@ $helvetica: Helvetica, Arial, sans-serif;
 $helveticaNeue: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $georgia: Georgia, serif;
 
-// Justified text
-.page__content {
-  text-align: justify;
-}
 
 // Mobile breakpoints
 @mixin mobile {
