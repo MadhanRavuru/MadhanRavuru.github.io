@@ -192,7 +192,7 @@ Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 fo
 |:--:| 
 | *Performance comparison of 3D car detection with different methods on KITTI test split* |
 
-| ![testsplitpc]({{ site.baseurl }}/images/testsplitpc.png) |
+| ![testsplitother]({{ site.baseurl }}/images/testsplitother.png) |
 |:--:| 
 | *Performance comparison of 3D pedestrian and cyclist detection with different methods on KITTI test split* |
 
