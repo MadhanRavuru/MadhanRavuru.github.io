@@ -10,39 +10,37 @@ mathjax: true
 
 Detecting and localizing objects in images and videos is a key component of many real-world applications, such as autonomous 
 driving and domestic robots. The CNN machinery for 2D object detection with 4 Degrees-of-Freedom (DoF) is mature to handle 
-large variations of viewpoints and background clutters in images. In autonomous driving, LiDAR sensors are mostly used to 
-generate 3D point clouds. The detection of 3D objects with point clouds still faces great challenges because of the
-irregular data format and sparse representation of point cloud with large search space. In the below figure, we can see the
-7 DoF of 3D object detection (position and dimensions of the bounding box along with box orientation).
-
+large variations of viewpoints and background clutters in images. Beyond understanding of 2D scenes, 3D object detection is in-dispensable and crucial for many applications. The remarkable progress achieved by CNN on 2D object detection in recent years has not transferred well to 3D object detection. In autonomous driving, LiDAR sensors are mostly used to 
+generate 3D point clouds. Using point clouds as input, the detection of 3D objects still faces great challenges because of the irregular data format and sparse representation of point cloud with large search space. Unlike 2D object detection, the 3D object detection requires also the estimation of orientation of bounding boxes. In the below figure, we can see the 7 DoF of 3D object detection (position and dimensions of the bounding box along with box orientation).
 
 | ![boundingbox]({{ site.baseurl }}/images/boundbox.png) |
 |:--:| 
-| *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian et. at. CVPR 2017)* |
+| *2D and 3D object detection. Images are adapted from 3D Bounding Box Estimation Using Deep Learning and Geometry (Arsalan Mousavian, Dragomir Anguelov, John Flynn, Jana Kosecka, CVPR 2017)* |
 
 A novel two-stage 3D object detection framework ([PointRCNN](https://arxiv.org/abs/1812.04244)), which directly uses 3D point clouds and achieves accurate and robust 3D detection performance is introduced. The [KITTI vision benchmark](http://www.cvlibs.net/datasets/kitti/) provides a standardized dataset for training and evaluating the performance of different 3D object detectors. The proposed method outperforms state-of-the-art methods with remarkable margins by using only point cloud as input on KITTI dataset.
 
 ## Related Work
 
-Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or regular 3D voxels for feature learning.
+Many state-of-the-art 3D detection methods make use of the mature 2D object detection frameworks by projection of point cloud to Bird's-eye view(BEV) or by quantization to regular 3D voxels for feature learning. However, the projection of point cloud to BEV loses geometric information. Transformation of point clouds to volumetric grids suffer from information loss during quantization. Such kind of data transformation might often obscure natural 3D patterns and invariances of the 3D data. We also discuss about Frustum-Pointnet, which uses mature 2D CNN framework and advanced 3D deep learning for object localization. This method relies completely on 2D detection performance, without taking advantage of 3D information for robust 3D bounding box proposal generation. 
 
 ### Aggregate View Object Detection (AVOD)
-[AVOD](https://arxiv.org/abs/1712.02294) uses LIDAR point clouds and RGB images to generate features that are shared by two subnetworks: a region proposal network (RPN) and a second stage detector network. The RPN places 80-100k anchor boxes in the 3D space and for each anchor box, features are pooled in multiple views for generating proposals. The second stage detection network uses the generated proposals to predict the accurate extents, orientation and classification of objects in 3D space. However, transforming point cloud to BEV loses geometric information. Also, this method uses large number of anchor boxes for proposal generation, which is not optimal.
+[AVOD](https://arxiv.org/abs/1712.02294) uses LIDAR point clouds and RGB images to generate features that are shared by two subnetworks: a region proposal network (RPN) and a second stage detector network. The RPN places 80-100k anchor boxes in the 3D space and for each anchor box, features are pooled in multiple views for generating proposals. A novel architecture, which is capable of performing multimodal feature fusion to generate reliable 3D object proposals on high resolution feature maps is used in RPN. The second stage detection network uses the generated proposals to predict the accurate extents, orientation and classification of objects in 3D space. However, transforming point cloud to BEV loses geometric information. Also, this method uses large number of anchor boxes for proposal generation, which is not optimal.
 
 | ![avod]({{ site.baseurl }}/images/avod.png) |
 |:--:| 
 | *Jason Ku, Melissa Mozifian, Jungwook Lee, Ali Harakeh and Steven Lake Waslander. Joint 3d proposal generation and object detection from view aggregation. CoRR, 2017.* |
 
 ### Frustum-Pointnet
-[Frustum-Pointnet](https://arxiv.org/abs/1711.08488) estimates 3D bounding boxes based on 3D points cropped from 2D regions. Given RGB-D data, 2D object region proposals in the RGB image are generated using a CNN. Then from the depth data, each 2D region is extruded to a 3D viewing frustum to get a point cloud. Finally, our frustum PointNet predicts a 3D bounding box for the object from the points in frustum. But, perfomance of this method heavily relies on 2D detection without taking the advantages of 3D information.
+[Frustum-Pointnet](https://arxiv.org/abs/1711.08488) estimates 3D bounding boxes based on 3D points cropped from 2D regions. 
+The method directly operates on raw point clouds by popping up RGB-D scans, and avoids obscuring natural 3D patterns and invariances of 3D data. Instead of relying completely on 3D proposals, Frustum-Pointnet uses mature 2D object detectors and advanced 3D deep learning for localization of objects. Given RGB-D data, 2D object region proposals in the RGB image are generated using a 2D CNN. Then from the depth data, each 2D region is extruded to a 3D viewing frustum to get a point cloud. Finally, Frustum-PointNet predicts a 3D bounding box for the object from the points in frustum. This might miss difficult objects, which are only clearly visible from 3D space. Also, perfomance of this method heavily relies on 2D detection without taking the advantages of 3D information.
 
 | ![frustum]({{ site.baseurl }}/images/frustum.png) |
 |:--:| 
 | *Charles Ruizhongtai Qi, Wei Liu, Chenxia Wu, Hao Su, and Leonidas J. Guibas. Frustum pointnets for 3d object detection from RGB-D data. CoRR, 2017* |
 
 ### VoxelNet
-[VoxelNet](https://arxiv.org/abs/1711.06396) is comprised of feature learning network, convolutional middle layers and RPN. The feature learning network divides raw point cloud into equally spaced 3D voxels. The points within each voxel are transformed into a unified feature representation through the voxel feature encoding (VFE) layer. Then, 3D convolution is applied to get aggregate spatial context. Finally, a RPN generates the 3D detection. However, information loss occurs during quantization. Also, 3D convolution suffers from greater computational cost and thus higher latency in comparison to 2D convolution.
-
+[VoxelNet](https://arxiv.org/abs/1711.06396) is a generic 3D object detection network, which combines extraction of feature and prediction of bounding box into a single stage, end-to-end trainable deep network. It is comprised of feature learning network, convolutional middle layers and RPN. The feature learning network divides raw point cloud into equally spaced 3D voxels. The points within each voxel are transformed into a unified feature representation through the voxel feature encoding (VFE) layer. Then, 3D convolution is applied to get aggregate spatial context. Finally, a RPN generates the 3D detection. However, information loss occurs during quantization of point cloud to volumetric representation. Also, 3D convolution suffers from greater computational cost and thus higher latency in comparison to 2D convolution. 3D CNN is
+both memory and computation inefficient, and is not optimal.
 
 | ![voxel]({{ site.baseurl }}/images/voxel.png) |
 |:--:| 
@@ -58,7 +56,7 @@ In contrast to the mentioned related work, PointRCNN achieves robust 3D object d
 * Segmenting the point cloud of the whole scene into foreground and background points 
 * Generates high quality 3D box proposals in bottom-up manner 
 
-**2.	Refining the proposals in the canonical coordinates**
+**2. Refining the proposals in the canonical coordinates**
 * Point cloud region pooling (proposed by authors)
 * Transforming the pooled points of each proposal to canonical coordinates (helps to learn better local spatial features) 
 
