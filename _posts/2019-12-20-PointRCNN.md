@@ -60,6 +60,8 @@ In contrast to the mentioned related work, PointRCNN achieves robust 3D object d
 * Transforming the pooled points of each proposal to canonical coordinates (helps to learn better local spatial features) 
 
 | ![overview]({{ site.baseurl }}/images/overview.png) |
+|:--:| 
+| *Overview of PointRCNN* |
 
 ### Bottom-up 3D box proposal generation (Stage 1)
 
