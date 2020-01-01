@@ -189,7 +189,7 @@ The qualitative results for car detection using PointRCNN method are shown in th
 
 The evaluation of PointRCNN on the challenging KITTI dataset and comparison with state-of-the-art 3D object detection methods is performed. Many ablation studies for the analysis of PointRCNN are also conducted.
 
-### Results of official Kitti test split
+### Results of official KITTI test split
 
 Average Precision(AP) is used as the evaluation metric with IoU threshold 0.7 for car and 0.5 for pedestrian and cyclist. Results are tabulated for all three difficulty level, i.e. , easy, moderate and hard. We can observe that PointRCNN outperforms other methods with good margins for the 3D car detection. Other methods include [MV3D](https://arxiv.org/abs/1611.07759), [UberATG-ContFuse](http://openaccess.thecvf.com/content_ECCV_2018/papers/Ming_Liang_Deep_Continuous_Fusion_ECCV_2018_paper.pdf), [AVOD-FPN](https://arxiv.org/abs/1712.02294), [F-PointNet](https://arxiv.org/abs/1711.08488), [VoxelNet](https://arxiv.org/abs/1711.06396) and [SECOND](https://www.mdpi.com/1424-8220/18/10/3337). MV3D, UberATG-ContFuse, AVOD-FPN and F-PointNet uses both RGB image and point cloud as input, while VoxelNet, SECOND and PointRCNN(our method) uses only point cloud as input. 
 
