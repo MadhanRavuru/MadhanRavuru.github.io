@@ -50,12 +50,12 @@ both memory and computation inefficient, and is not optimal.
 
 In contrast to the mentioned related work, PointRCNN achieves robust 3D object detection performance from raw point clouds, which is optimal, efficient and free from quantization. The proposed method comprises of 2 stages:
 
-**1. Bottom-up 3D box proposal generation**
+**a. Bottom-up 3D box proposal generation**
 * PointNet++ with multi-scale grouping as our backbone network
 * Segmenting the point cloud of the whole scene into foreground and background points 
 * Generates high quality 3D box proposals in bottom-up manner 
 
-**2. Refining the proposals in the canonical coordinates**
+**b. Refining the proposals in the canonical coordinates**
 * Point cloud region pooling (proposed by authors)
 * Transforming the pooled points of each proposal to canonical coordinates (helps to learn better local spatial features) 
 
