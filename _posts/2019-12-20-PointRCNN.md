@@ -110,7 +110,7 @@ $$\begin{aligned}
 \end{aligned}$$
 
 
-To calculate the center location $$y$$ along the vertical $$Y$$ axis, [smooth L1 loss](https://arxiv.org/pdf/1711.06753.pdf) is directly used for regression as most object's $$y$$ values are within a very limited range. So, using the smooth $$L$$1 loss is sufficient to obtain accurate $$y$$ values. Also, for the object size $$(h, w, l)$$ estimation, smooth $$L$$1  loss is used to directly regress by calculating residuals w.r.t. the mean object size of each class in the whole training set. Thus, the localization target for $$y,h,w,l$$ is given by,
+To calculate the center location $$y$$ along the vertical $$Y$$ axis, [smooth L1 loss](https://arxiv.org/pdf/1711.06753.pdf) is directly used for regression as most object's $$y$$ values are within a very limited range. So, using the smooth $$L$$1 loss is sufficient to obtain accurate $$y$$ values. Instead of using $$L$$1 or $$L$$2 loss for regression, smooth $$L$$1 loss is used because it combines the advantages of $$L$$1 loss and $$L$$2 loss. For the object size $$(h, w, l)$$ estimation, smooth $$L$$1  loss is used to directly regress by calculating residuals w.r.t. the mean object size of each class in the whole training set. Thus, the localization target for $$y,h,w,l$$ is given by,
 
 
 $$\begin{aligned}
